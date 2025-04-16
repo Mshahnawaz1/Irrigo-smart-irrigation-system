@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather App</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f8ff;
+      }
+      .weather-container {
+        text-align: center;
+        padding: 20px;
+        background-color: #ffffff;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+      }
+      .weather-icon {
+        width: 100px;
+        height: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="weather-container">
+      <h1>Weather App</h1>
+      <p id="location">Location: Loading...</p>
+      <p id="temperature">Temperature: --</p>
+      <p id="rain">Precipitation: --</p>
+      <img id="weather-icon" class="weather-icon" src="" alt="Weather Icon" />
+      <p id="condition">Condition: --</p>
+    </div>
+
+    <script>
+      function fetchWeather(lat, lon) {
+        const API_KEY = "37e813d661d84461a53111553251602"; // Replace with your API key
+
+        // Construct the API URL
+        const path = `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${lat},${lon}&days=1&aqi=no&alerts=no`;
+
+        // Fetch weather data
+        fetch(path)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((weather_dat) => {
+            // Display weather data
+            document.getElementById(
+              "location"
+            ).textContent = `Location: ${weather_dat.location.name}, ${weather_dat.location.region}`;
+            document.getElementById(
+              "temperature"
+            ).textContent = `Temperature: ${weather_dat.current.temp_c} °C`;
+            document.getElementById(
+              "rain"
+            ).textContent = `Precipitation: ${weather_dat.current.precip_mm} mm`;
+            document.getElementById(
+              "condition"
+            ).textContent = `Condition: ${weather_dat.current.condition.text}`;
+            document.getElementById(
+              "weather-icon"
+            ).src = `https:${weather_dat.current.condition.icon}`;
+          })
+          .catch((error) => {
+            console.error("Error fetching weather data:", error);
+          });
+      }
+
+      // Get user's location using Geolocation API
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            fetchWeather(lat, lon);
+          },
+          (error) => {
+            console.error("Error getting location:", error);
+            document.getElementById("location").textContent =
+              "Unable to retrieve location.";
+          }
+        );
+      } else {
+        document.getElementById("location").textContent =
+          "Geolocation is not supported by this browser.";
+      }
+    </script>
+  </body>
+</html>

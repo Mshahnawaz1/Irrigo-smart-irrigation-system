@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask React Integration</title>
+</head>
+<body>
+    <h1>Welcome to Flask React Integration</h1>
+    <p>Click the button to send data to the backend.</p>
+    <button id="sendButton">Send Data to Flask</button>
+
+    <script>
+        document.getElementById('sendButton').addEventListener('click', function() {
+            const data = { name: "John Doe", age: 25 };
+
+            fetch('http://127.0.0.1:5000/data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log(result);
+                alert('Data sent successfully');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
